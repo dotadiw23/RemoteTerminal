@@ -33,23 +33,29 @@ public class Client {
                 String command = br.readLine();
 
                 if (command.length() > 0) {
-                    output.writeUTF(command);
-                    String terminalOutput = input.readUTF();
-                    if (terminalOutput.equals("CONN_CLOSE")) {
-                        System.out.println("Disconnected by the server");
-                        break;
-                    }else if (terminalOutput.equals("NO_OUTPUT")) {
-                        System.out.println(command + ": command not found");
+                    if (command.equalsIgnoreCase("benchmark")) {
+                        startBenchmark();
                     }else {
-                        System.out.println(terminalOutput);
+                        output.writeUTF(command);
+                        String terminalOutput = input.readUTF();
+                        if (terminalOutput.equals("CONN_CLOSE")) {
+                            System.out.println("Disconnected by the server");
+                            break;
+                        }else if (terminalOutput.equals("NO_OUTPUT")) {
+                            System.out.println(command + ": command not found");
+                        }else {
+                            System.out.println(terminalOutput);
+                        }
                     }
                 }
             }
-
-            startCommunication();
         }catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void startBenchmark() {
+        //TODO: Make a multi-thread execution command benchmark
     }
 
     public static void main(String[] args) {
