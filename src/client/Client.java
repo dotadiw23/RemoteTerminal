@@ -34,7 +34,7 @@ public class Client {
 
                 if (command.length() > 0) {
                     if (command.equalsIgnoreCase("benchmark")) {
-                        startBenchmark();
+                        startBenchmark(HOST, PORT);
                     }else {
                         output.writeUTF(command);
                         String terminalOutput = input.readUTF();
@@ -54,8 +54,30 @@ public class Client {
         }
     }
 
-    private void startBenchmark() {
-        //TODO: Make a multi-thread execution command benchmark
+    private void startBenchmark(String host, int port) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Please enter the number of thread that you want to execute... ");
+        try {
+            int threads = Integer.parseInt(br.readLine());
+            System.out.println("Enter the bash command");
+            String command = br.readLine();
+
+            if (!command.equals("exit")) {
+                for (int i = 0; i < threads; i++) {
+                    BenchmarkThread commandThread = new BenchmarkThread(host, port, command);
+                    Thread t = new Thread(commandThread);
+                    t.start();
+                    long start = System.currentTimeMillis();
+                    t.join();
+                    long end = System.currentTimeMillis();
+                    System.out.println(t.getName() + " execution time: " + (end-start) + " millis");
+                }
+            }else {
+                System.out.println("You can't exit more than once");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
